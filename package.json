@@ -1,0 +1,32 @@
+{
+  "name": "semantix",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@chroma-core/default-embed": "^0.1.8",
+    "@google/genai": "^1.10.0",
+    "@langchain/textsplitters": "^0.1.0",
+    "axios": "^1.10.0",
+    "cheerio": "^1.1.0",
+    "chromadb": "^3.0.9",
+    "dotenv": "^17.2.0",
+    "next": "15.4.2",
+    "puppeteer": "^24.14.0",
+    "puppeteer-core": "^24.14.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.2",
+    "tailwindcss": "^4"
+  }
+}
