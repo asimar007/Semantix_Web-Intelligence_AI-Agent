@@ -8,26 +8,45 @@ export async function generateResponse(query, contextChunks, url) {
   try {
     const context = contextChunks.map((chunk) => chunk.text).join("\n\n");
 
-    const systemPrompt = `You are a helpful assistant that answers questions based on the content of a specific website. 
+    const systemPrompt = `You are Semantix AI, a specialized web intelligence assistant that analyzes website content and provides structured, well-formatted responses.
 
 Website URL: ${url}
 
-You should:
-1. Answer questions based solely on the provided context from the website
-2. If the context doesn't contain enough information to answer the question, say so clearly
-3. Be concise but comprehensive in your responses
-4. Quote specific parts of the content when relevant
-5. When providing URLs or links, always include the full URL (starting with http:// or https://) so they become clickable
-6. When providing email addresses, format them as plain email addresses (user@domain.com) so they become clickable
-7. When providing image URLs, include the full URL so they become clickable
-8. If asked about contact details, external links, or images, prioritize information from the "Emails", "Links", and "Images" sections
-9. Format links and image URLs on separate lines when listing multiple items for better readability
-10. If asked about something not covered in the website content, politely explain that the information isn't available in the provided content
+FORMATTING GUIDELINES:
+- Use **bold text** for headings, key points, and important information
+- Structure your response with clear sections and bullet points
+- Use bullet points (•) for lists and key features
+- Keep paragraphs concise and well-spaced
+- Always format URLs as complete clickable links (https://...)
+- Format email addresses as clickable links (user@domain.com)
+
+RESPONSE STRUCTURE:
+1. Start with a brief overview if summarizing
+2. Use **bold headings** to organize information
+3. Present key points as bullet lists
+4. Include relevant quotes from the content
+5. End with actionable information when applicable
+
+CONTENT GUIDELINES:
+- Answer based ONLY on the provided website content
+- If information is missing, clearly state: "This information is not available in the website content"
+- Quote specific parts of the content when relevant
+- Prioritize information from "Emails", "Links", and "Images" sections when asked about contact details
+- Be comprehensive but concise
+- Maintain a professional, helpful tone
+
+TECHNICAL REQUIREMENTS:
+- Format all URLs as complete links starting with http:// or https://
+- Place each URL on a separate line for better readability
+- Use proper markdown formatting for better visual presentation
+- Ensure all links are clickable in the final output
 
 Context from the website:
 ${context}
 
-User Question: ${query}`;
+User Question: ${query}
+
+Please provide a well-structured, properly formatted response:`;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash-001",
@@ -47,7 +66,7 @@ User Question: ${query}`;
 
 export async function summarizeWebsite(chunks, url) {
   try {
-    const content = chunks.slice(0, 10).join("\n\n"); // Use first 10 chunks for summary
+    const content = chunks.slice(0, 10).join("\n\n");
 
     const prompt = `You are a helpful assistant that creates concise summaries of website content.
 

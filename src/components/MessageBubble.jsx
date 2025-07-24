@@ -1,77 +1,160 @@
-function parseMessageWithLinks(message, isUser) {
+import { Bug, Bot } from "lucide-react";
+
+function parseMessageWithFormatting(message) {
   // Enhanced URL regex pattern to match various URL formats and email addresses
   const urlRegex =
     /(https?:\/\/[^\s<>"{}|\\^`\[\]]+|www\.[^\s<>"{}|\\^`\[\]]+|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
 
-  const parts = message.split(urlRegex);
+  // Bold text regex pattern
+  const boldRegex = /\*\*(.*?)\*\*/g;
 
-  return parts.map((part, index) => {
-    // Check if this part is a URL or email
-    if (urlRegex.test(part)) {
-      let href = part;
-      let displayText = part;
+  // First, let's split by line breaks to handle each line separately
+  const lines = message.split("\n");
 
-      // Handle different URL formats
-      if (part.startsWith("www.")) {
-        href = `https://${part}`;
-      } else if (part.includes("@") && !part.startsWith("mailto:")) {
-        href = `mailto:${part}`;
-        displayText = part;
-      }
-
-      // Clean up URLs (remove trailing punctuation)
-      href = href.replace(/[.,;:!?]+$/, "");
-      displayText = displayText.replace(/[.,;:!?]+$/, "");
-
-      return (
-        <a
-          key={index}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`underline decoration-2 hover:no-underline transition-all duration-200 font-medium ${
-            isUser
-              ? "text-blue-100 hover:text-white hover:bg-blue-500 hover:bg-opacity-20"
-              : "text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-          } px-1 py-0.5 rounded`}
-          title={`Open ${href} in new tab`}
-        >
-          {displayText}
-          {href.startsWith("http") && (
-            <svg
-              className="inline w-3 h-3 ml-1 opacity-70"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-              />
-            </svg>
-          )}
-        </a>
-      );
+  return lines.map((line, lineIndex) => {
+    if (line.trim() === "") {
+      return <br key={`br-${lineIndex}`} />;
     }
 
-    // Return regular text
-    return part;
+    // Process the line for bold formatting and links
+    let processedLine = line;
+    const elements = [];
+    let lastIndex = 0;
+
+    // Find all bold patterns and URLs in the line
+    const allMatches = [];
+
+    // Find bold matches
+    let boldMatch;
+    while ((boldMatch = boldRegex.exec(line)) !== null) {
+      allMatches.push({
+        type: "bold",
+        start: boldMatch.index,
+        end: boldMatch.index + boldMatch[0].length,
+        content: boldMatch[1],
+        fullMatch: boldMatch[0],
+      });
+    }
+
+    // Find URL matches
+    let urlMatch;
+    const urlRegexCopy = new RegExp(urlRegex.source, urlRegex.flags);
+    while ((urlMatch = urlRegexCopy.exec(line)) !== null) {
+      allMatches.push({
+        type: "url",
+        start: urlMatch.index,
+        end: urlMatch.index + urlMatch[0].length,
+        content: urlMatch[0],
+        fullMatch: urlMatch[0],
+      });
+    }
+
+    // Sort matches by position
+    allMatches.sort((a, b) => a.start - b.start);
+
+    // Process matches in order
+    allMatches.forEach((match, matchIndex) => {
+      // Add text before this match
+      if (match.start > lastIndex) {
+        const textBefore = line.slice(lastIndex, match.start);
+        if (textBefore) {
+          elements.push(textBefore);
+        }
+      }
+
+      // Add the formatted match
+      if (match.type === "bold") {
+        elements.push(
+          <strong
+            key={`bold-${lineIndex}-${matchIndex}`}
+            className="font-bold text-white"
+          >
+            {match.content}
+          </strong>
+        );
+      } else if (match.type === "url") {
+        let href = match.content;
+        let displayText = match.content;
+
+        // Handle different URL formats
+        if (match.content.startsWith("www.")) {
+          href = `https://${match.content}`;
+        } else if (
+          match.content.includes("@") &&
+          !match.content.startsWith("mailto:")
+        ) {
+          href = `mailto:${match.content}`;
+        }
+
+        // Clean up URLs (remove trailing punctuation)
+        href = href.replace(/[.,;:!?]+$/, "");
+        displayText = displayText.replace(/[.,;:!?]+$/, "");
+
+        elements.push(
+          <a
+            key={`url-${lineIndex}-${matchIndex}`}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 underline decoration-1 hover:decoration-2 transition-all duration-200"
+            title={`Open ${href} in new tab`}
+          >
+            {displayText}
+          </a>
+        );
+      }
+
+      lastIndex = match.end;
+    });
+
+    // Add remaining text after all matches
+    if (lastIndex < line.length) {
+      const remainingText = line.slice(lastIndex);
+      if (remainingText) {
+        elements.push(remainingText);
+      }
+    }
+
+    // If no matches found, return the original line
+    if (elements.length === 0) {
+      elements.push(line);
+    }
+
+    return (
+      <div key={`line-${lineIndex}`} className="mb-2 last:mb-0">
+        {elements}
+      </div>
+    );
   });
 }
 
 export default function MessageBubble({ message, isUser }) {
   return (
-    <div className={`flex mb-4 ${isUser ? "justify-end" : "justify-start"}`}>
-      <div
-        className={`max-w-[70%] px-4 py-3 rounded-2xl whitespace-pre-wrap break-words ${
-          isUser
-            ? "bg-blue-600 text-white"
-            : "bg-gray-100 text-gray-800 border border-gray-200"
-        }`}
-      >
-        {parseMessageWithLinks(message, isUser)}
+    <div className={`group w-full ${isUser ? "bg-black/10" : "bg-black/5"}`}>
+      <div className="flex p-4 gap-4 text-base md:gap-6 md:max-w-4xl md:py-6 lg:px-0 m-auto">
+        {/* Avatar */}
+        <div className="flex-shrink-0 flex flex-col relative items-end">
+          <div
+            className={`relative h-[30px] w-[30px] p-1 rounded-sm text-white flex items-center justify-center ${
+              isUser
+                ? "bg-gradient-to-r from-purple-500 to-cyan-500"
+                : "bg-gradient-to-r from-gray-600 to-gray-700"
+            }`}
+          >
+            {isUser ? <Bug className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+          </div>
+        </div>
+
+        {/* Message Content */}
+        <div className="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
+          <div className="flex flex-grow flex-col gap-3">
+            <div className="min-h-[20px] flex flex-col items-start gap-4 whitespace-pre-wrap break-words">
+              <div className="w-full break-words text-gray-100 leading-relaxed">
+                {parseMessageWithFormatting(message)}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
