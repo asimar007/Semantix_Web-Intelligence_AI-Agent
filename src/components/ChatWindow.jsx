@@ -121,7 +121,7 @@ export default function ChatWindow({ currentUrl }) {
   }
 
   return (
-    <Card className="flex flex-col h-[calc(100vh-300px)] bg-black/20 backdrop-blur-sm border-white/10 overflow-hidden">
+    <Card className="flex flex-col h-screen md:h-[calc(100vh-300px)] bg-black/20 backdrop-blur-sm border-white/10 overflow-hidden">
       <CardContent className="flex-1 overflow-y-auto bg-gradient-to-b from-black/10 to-black/20 p-0">
         {messages.length === 0 && (
           <div className="flex items-center justify-center h-full">

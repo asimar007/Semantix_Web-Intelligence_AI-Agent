@@ -5,7 +5,6 @@ export const metadata = {
   title: "Semantix - Web Intelligence AI Agent",
   description:
     "Transform any website into a searchable knowledge base with advanced AI processing, semantic search, and intelligent content extraction.",
-  generator: "v0.dev",
 };
 
 export default function RootLayout({ children }) {

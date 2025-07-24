@@ -254,8 +254,8 @@ export default function PlaygroundPage() {
 
         {/* Chat Section */}
         {currentUrl && (
-          <section className="pb-8">
-            <div className="bg-black/40 backdrop-blur-sm border border-white/20 rounded-lg overflow-hidden">
+          <section className="pb-0 md:pb-8">
+            <div className="w-screen md:w-full md:max-w-4xl mx-auto bg-black/40 backdrop-blur-sm border-0 md:border border-white/20 rounded-none md:rounded-lg overflow-hidden">
               <div className="bg-black/60 px-4 py-3 border-b border-white/10">
                 <div className="flex items-center gap-2">
                   <MessageCircle className="w-4 h-4 text-cyan-400" />
