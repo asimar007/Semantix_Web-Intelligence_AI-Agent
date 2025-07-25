@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
                 alt="Abstract geometric background"
                 fill
                 priority
-                quality={85}
+                quality={75}
                 className="object-cover object-center scale-125 opacity-90"
                 sizes="100vw"
               />
