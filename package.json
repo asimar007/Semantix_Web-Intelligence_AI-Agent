@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chroma-core/default-embed": "^0.1.8",
     "@google/genai": "^1.10.0",
     "@langchain/textsplitters": "^0.1.0",
     "@radix-ui/react-slot": "^1.2.3",
