@@ -4,10 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "node -e \"try{require('puppeteer')}catch(e){console.log('Puppeteer skipped')}\""
+    "lint": "next lint"
   },
   "dependencies": {
     "@chroma-core/default-embed": "^0.1.8",
@@ -22,7 +21,7 @@
     "dotenv": "^17.2.0",
     "lucide-react": "^0.525.0",
     "next": "15.4.2",
-    "puppeteer-core": "^24.14.0",
+    "puppeteer": "^24.14.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "tailwind-merge": "^3.3.1"

@@ -7,7 +7,6 @@
 # Dependencies - Heavy packages
 node_modules/.cache
 node_modules/puppeteer/.local-chromium
-node_modules/puppeteer-core/.local-chromium
 node_modules/@swc/core-*
 node_modules/@esbuild/*
 node_modules/chromadb/dist
