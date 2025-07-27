@@ -51,7 +51,7 @@ export function ArchitectureSection() {
           <div className="text-center">
             <div className="flex items-center justify-center mx-auto mb-4">
               <Image
-                src="/images/chromadb.png"
+                src="/images/chromaDB.png"
                 alt="ChromaDB"
                 width={64}
                 height={64}
