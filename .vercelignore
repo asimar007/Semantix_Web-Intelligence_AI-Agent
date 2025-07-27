@@ -4,17 +4,23 @@
 .env.test.local
 .env.production.local
 
-# Dependencies
+# Dependencies - Heavy packages
 node_modules/.cache
 node_modules/puppeteer/.local-chromium
 node_modules/puppeteer-core/.local-chromium
 node_modules/@swc/core-*
 node_modules/@esbuild/*
+node_modules/chromadb/dist
+node_modules/@google/genai/dist
+node_modules/@langchain/textsplitters/dist
+node_modules/axios/dist
+node_modules/cheerio/dist
 
 # Build artifacts
 .next/cache
 .next/standalone
 .next/static/chunks/webpack-*
+.next/trace
 
 # Development tools
 .vscode
@@ -36,7 +42,16 @@ Thumbs.db
 # Testing
 coverage/
 .nyc_output
+__tests__/
+*.test.js
+*.spec.js
+
+# Documentation
+README.md
+docs/
+*.md
 
 # Temporary files
 *.tmp
 *.temp
+.turbo

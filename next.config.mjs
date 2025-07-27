@@ -9,6 +9,8 @@ const nextConfig = {
       "@chroma-core/default-embed",
       "cheerio",
       "axios",
+      "@google/genai",
+      "@langchain/textsplitters",
     ],
     outputFileTracingExcludes: {
       "*": [
@@ -17,26 +19,43 @@ const nextConfig = {
         "node_modules/@esbuild/linux-x64",
         "node_modules/puppeteer/.local-chromium/**/*",
         "node_modules/puppeteer-core/.local-chromium/**/*",
+        "node_modules/chromadb/dist/**/*",
+        "node_modules/@google/genai/dist/**/*",
+        "node_modules/@langchain/**/*",
+        "node_modules/axios/dist/**/*",
+        "node_modules/cheerio/dist/**/*",
       ],
     },
   },
 
   // Webpack optimizations
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      // Exclude heavy packages from client bundle
-      config.externals.push({
-        puppeteer: "commonjs puppeteer",
-        "puppeteer-core": "commonjs puppeteer-core",
-        chromadb: "commonjs chromadb",
-        cheerio: "commonjs cheerio",
-      });
+  webpack: (config, { isServer, dev }) => {
+    if (isServer && !dev) {
+      // More aggressive externalization
+      config.externals.push(
+        "puppeteer",
+        "puppeteer-core",
+        "chromadb",
+        "@chroma-core/default-embed",
+        "cheerio",
+        "@google/genai",
+        "@langchain/textsplitters",
+        "axios"
+      );
     }
 
     // Optimize bundle size
     config.resolve.alias = {
       ...config.resolve.alias,
       puppeteer$: "puppeteer-core",
+    };
+
+    // Ignore large files
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
     };
 
     return config;
@@ -59,4 +78,9 @@ const nextConfig = {
 
   // Optimize fonts
   optimizeFonts: true,
+
+  // Reduce bundle size
+  swcMinify: true,
 };
+
+export default nextConfig;
