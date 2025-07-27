@@ -1,7 +1,22 @@
 {
   "functions": {
-    "api/**": {
-      "excludeFiles": "{.next,*.cache,node_modules,public,app}/**"
+    "src/app/api/scrape/route.js": {
+      "maxDuration": 60
+    },
+    "src/app/api/embed/route.js": {
+      "maxDuration": 300
+    },
+    "src/app/api/chat/route.js": {
+      "maxDuration": 30
     }
-  }
+  },
+  "build": {
+    "env": {
+      "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": "true"
+    }
+  },
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "devCommand": "npm run dev"
 }
