@@ -1,16 +1,13 @@
 {
   "functions": {
     "src/app/api/scrape/route.js": {
-      "maxDuration": 60,
-      "runtime": "nodejs20.x"
+      "maxDuration": 60
     },
     "src/app/api/embed/route.js": {
-      "maxDuration": 300,
-      "runtime": "nodejs20.x"
+      "maxDuration": 300
     },
     "src/app/api/chat/route.js": {
-      "maxDuration": 30,
-      "runtime": "nodejs20.x"
+      "maxDuration": 30
     }
   },
   "build": {
@@ -18,9 +15,5 @@
       "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": "true",
       "PUPPETEER_EXECUTABLE_PATH": "/usr/bin/google-chrome-stable"
     }
-  },
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "installCommand": "npm ci --production",
-  "devCommand": "npm run dev"
+  }
 }
