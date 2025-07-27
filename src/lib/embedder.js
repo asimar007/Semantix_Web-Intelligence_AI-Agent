@@ -41,7 +41,9 @@ export async function createEmbedding(text) {
       contents: text.trim(),
     });
 
-    return response.embeddings[0].values;
+    const embedding = response.embeddings[0].values;
+    console.log(`Embedding dimension: ${embedding.length}`);
+    return embedding;
   } catch (error) {
     throw new Error(`Failed to create embedding: ${error.message}`);
   }

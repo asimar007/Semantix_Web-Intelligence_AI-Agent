@@ -1,11 +1,9 @@
-import { CloudClient } from "chromadb";
+import { DataAPIClient } from "@datastax/astra-db-ts";
 
-// ChromaDB Cloud configuration
-const client = new CloudClient({
-  apiKey: process.env.CHROMA_API_KEY,
-  tenant: process.env.CHROMA_TENANT,
-  database: process.env.CHROMA_DATABASE,
-});
+// Astra DB configuration
+const client = new DataAPIClient(process.env.ASTRA_DB_APPLICATION_TOKEN);
+
+const db = client.db(process.env.ASTRA_DB_API_ENDPOINT);
 
 const COLLECTION_NAME = "website_chunks_google";
 
@@ -13,8 +11,19 @@ let myCollection = null;
 
 async function init() {
   if (!myCollection) {
-    myCollection = await client.getOrCreateCollection({
-      name: COLLECTION_NAME,
+    try {
+      // Try to delete existing collection first
+      await db.dropCollection(COLLECTION_NAME);
+    } catch (error) {
+      // Collection might not exist, that's fine
+    }
+
+    // Create collection with correct vector configuration
+    myCollection = await db.createCollection(COLLECTION_NAME, {
+      vector: {
+        dimension: 3072, // Correct dimension for Gemini embeddings
+        metric: "cosine",
+      },
     });
   }
   return myCollection;
@@ -22,25 +31,31 @@ async function init() {
 
 export async function storeChunks(chunks, embeddings, url) {
   const collection = await init();
-  await clearUrlDocuments(url, collection);
+
+  // Clear existing documents for this URL first
+  await clearUrlDocuments(url);
 
   const timestamp = new Date(Date.now()).toLocaleString();
 
-  const ids = [];
-  const metadatas = [];
-
-  const documents = chunks.map((chunk, index) => {
-    ids.push(`${url}::${timestamp}::${index}`);
-    metadatas.push({
+  // Prepare documents for Astra DB
+  const documents = chunks.map((chunk, index) => ({
+    _id: `${url}::${timestamp}::${index}`,
+    text: chunk,
+    $vector: embeddings[index], // Vector field
+    metadata: {
       url,
       chunk_index: index,
       timestamp,
       chunk_length: chunk.length,
-    });
-    return chunk;
-  });
+    },
+  }));
 
-  await collection.add({ ids, embeddings, documents, metadatas });
+  // Insert documents in batches (Astra DB recommends max 20 documents per batch)
+  const batchSize = 20;
+  for (let i = 0; i < documents.length; i += batchSize) {
+    const batch = documents.slice(i, i + batchSize);
+    await collection.insertMany(batch);
+  }
 
   return { success: true, chunks_stored: documents.length };
 }
@@ -51,36 +66,55 @@ export async function searchSimilarChunks(
   url = null
 ) {
   const collection = await init();
-  const where = url ? { url } : undefined;
 
-  const results = await collection.query({
-    queryEmbeddings: [queryEmbedding],
-    nResults: topK,
-    where,
+  const filter = url ? { "metadata.url": url } : {};
+
+  const results = await collection.find(filter, {
+    sort: { $vector: queryEmbedding },
+    limit: topK,
   });
 
-  const docs = results.documents?.[0];
+  const docs = await results.toArray();
+
   if (!docs?.length) return [];
 
-  return docs.map((text, i) => ({
-    text,
-    metadata: results.metadatas[0][i],
-    distance: results.distances[0][i],
+  return docs.map((doc) => ({
+    text: doc.text,
+    metadata: doc.metadata,
+    distance: 1 - (doc.$similarity || 0), // Convert similarity to distance
   }));
 }
 
-export async function clearUrlDocuments(url, existingCollection = null) {
-  const collection = existingCollection || (await init());
-  const results = await collection.get({ where: { url } });
-  if (results.ids?.length) {
-    await collection.delete({ ids: results.ids });
-  }
+export async function clearUrlDocuments(url) {
+  const collection = await init();
+
+  // Delete all documents with matching URL
+  await collection.deleteMany({
+    "metadata.url": url,
+  });
 }
 
 export async function getAllStoredUrls() {
   const collection = await init();
-  const results = await collection.get();
-  const metas = results.metadatas;
-  if (!metas?.length) return [];
-  return [...new Set(metas.map((m) => m.url))];
+
+  // Get all documents and extract unique URLs
+  const results = await collection.find(
+    {},
+    {
+      projection: { "metadata.url": 1 },
+    }
+  );
+
+  const docs = await results.toArray();
+
+  if (!docs?.length) return [];
+
+  const urls = new Set();
+  docs.forEach((doc) => {
+    if (doc.metadata?.url) {
+      urls.add(doc.metadata.url);
+    }
+  });
+
+  return Array.from(urls);
 }
