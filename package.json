@@ -9,12 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@datastax/astra-db-ts": "^2.0.2",
     "@google/genai": "^1.10.0",
     "@langchain/textsplitters": "^0.1.0",
+    "@pinecone-database/pinecone": "^6.1.2",
     "@radix-ui/react-slot": "^1.2.3",
-    "axios": "^1.10.0",
-    "cheerio": "^1.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.0",

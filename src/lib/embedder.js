@@ -42,7 +42,6 @@ export async function createEmbedding(text) {
     });
 
     const embedding = response.embeddings[0].values;
-    console.log(`Embedding dimension: ${embedding.length}`);
     return embedding;
   } catch (error) {
     throw new Error(`Failed to create embedding: ${error.message}`);
@@ -54,7 +53,7 @@ export async function createEmbeddings(textArray) {
     throw new Error("TextArray must be a non-empty array");
   }
 
-  const chunks = textArray.length > 20 ? textArray.slice(0, 20) : textArray;
+  const chunks = textArray.length > 50 ? textArray.slice(0, 50) : textArray;
   const embeddings = [];
 
   for (let i = 0; i < chunks.length; i++) {

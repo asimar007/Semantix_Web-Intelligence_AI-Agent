@@ -1,120 +1,152 @@
-import { DataAPIClient } from "@datastax/astra-db-ts";
+import { Pinecone } from "@pinecone-database/pinecone";
 
-// Astra DB configuration
-const client = new DataAPIClient(process.env.ASTRA_DB_APPLICATION_TOKEN);
+const pinecone = new Pinecone({
+  apiKey: process.env.PINECONE_API_KEY,
+});
 
-const db = client.db(process.env.ASTRA_DB_API_ENDPOINT);
+const INDEX_NAME = "website-chunks-google";
 
-const COLLECTION_NAME = "website_chunks_google";
+let myIndex = null;
 
-let myCollection = null;
-
+// Initialize Pinecone index, create if doesn't exist
 async function init() {
-  if (!myCollection) {
-    try {
-      // Try to delete existing collection first
-      await db.dropCollection(COLLECTION_NAME);
-    } catch (error) {
-      // Collection might not exist, that's fine
+  if (!myIndex) {
+    const indexList = await pinecone.listIndexes();
+    const indexExists = indexList.indexes?.some(
+      (index) => index.name === INDEX_NAME
+    );
+
+    if (!indexExists) {
+      await pinecone.createIndex({
+        name: INDEX_NAME,
+        dimension: 3072,
+        metric: "cosine",
+        spec: {
+          serverless: {
+            cloud: "aws",
+            region: "us-east-1",
+          },
+        },
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 60000));
     }
 
-    // Create collection with correct vector configuration
-    myCollection = await db.createCollection(COLLECTION_NAME, {
-      vector: {
-        dimension: 3072, // Correct dimension for Gemini embeddings
-        metric: "cosine",
-      },
-    });
+    myIndex = pinecone.index(INDEX_NAME);
   }
-  return myCollection;
+  return myIndex;
 }
 
+// Store text chunks and their embeddings in Pinecone
 export async function storeChunks(chunks, embeddings, url) {
-  const collection = await init();
-
-  // Clear existing documents for this URL first
-  await clearUrlDocuments(url);
+  const index = await init();
+  await clearUrlDocuments(url, index);
 
   const timestamp = new Date(Date.now()).toLocaleString();
+  const validChunks = chunks.slice(0, embeddings.length);
 
-  // Prepare documents for Astra DB
-  const documents = chunks.map((chunk, index) => ({
-    _id: `${url}::${timestamp}::${index}`,
-    text: chunk,
-    $vector: embeddings[index], // Vector field
-    metadata: {
-      url,
-      chunk_index: index,
-      timestamp,
-      chunk_length: chunk.length,
-    },
-  }));
+  const vectors = validChunks.map((chunk, i) => {
+    const embedding = embeddings[i];
 
-  // Insert documents in batches (Astra DB recommends max 20 documents per batch)
-  const batchSize = 20;
-  for (let i = 0; i < documents.length; i += batchSize) {
-    const batch = documents.slice(i, i + batchSize);
-    await collection.insertMany(batch);
+    return {
+      id: `${url}::${timestamp}::${i}`,
+      values: embedding,
+      metadata: {
+        url,
+        chunk_index: i,
+        timestamp,
+        chunk_length: chunk.length,
+        text: chunk,
+      },
+    };
+  });
+
+  const batchSize = 100;
+  for (let i = 0; i < vectors.length; i += batchSize) {
+    const batch = vectors.slice(i, i + batchSize);
+    await index.upsert(batch);
   }
 
-  return { success: true, chunks_stored: documents.length };
+  return { success: true, chunks_stored: vectors.length };
 }
 
+// Search for similar chunks using query embedding
 export async function searchSimilarChunks(
   queryEmbedding,
   topK = 5,
   url = null
 ) {
-  const collection = await init();
+  const index = await init();
 
-  const filter = url ? { "metadata.url": url } : {};
+  const queryOptions = {
+    vector: queryEmbedding,
+    topK,
+    includeMetadata: true,
+    includeValues: false,
+  };
 
-  const results = await collection.find(filter, {
-    sort: { $vector: queryEmbedding },
-    limit: topK,
-  });
+  if (url) {
+    queryOptions.filter = { url: { $eq: url } };
+  }
 
-  const docs = await results.toArray();
+  const results = await index.query(queryOptions);
 
-  if (!docs?.length) return [];
+  if (!results.matches?.length) return [];
 
-  return docs.map((doc) => ({
-    text: doc.text,
-    metadata: doc.metadata,
-    distance: 1 - (doc.$similarity || 0), // Convert similarity to distance
+  return results.matches.map((match) => ({
+    text: match.metadata.text,
+    metadata: {
+      url: match.metadata.url,
+      chunk_index: match.metadata.chunk_index,
+      timestamp: match.metadata.timestamp,
+      chunk_length: match.metadata.chunk_length,
+    },
+    distance: 1 - match.score,
   }));
 }
 
-export async function clearUrlDocuments(url) {
-  const collection = await init();
+// Delete all documents for a specific URL
+export async function clearUrlDocuments(url, existingIndex = null) {
+  const index = existingIndex || (await init());
 
-  // Delete all documents with matching URL
-  await collection.deleteMany({
-    "metadata.url": url,
+  const queryResponse = await index.query({
+    vector: new Array(3072).fill(0),
+    topK: 10000,
+    filter: { url: { $eq: url } },
+    includeMetadata: false,
+    includeValues: false,
   });
+
+  if (queryResponse.matches?.length) {
+    const idsToDelete = queryResponse.matches.map((match) => match.id);
+
+    const batchSize = 1000;
+    for (let i = 0; i < idsToDelete.length; i += batchSize) {
+      const batch = idsToDelete.slice(i, i + batchSize);
+      await index.deleteMany(batch);
+    }
+  }
 }
 
+// Get all unique URLs stored in the index
 export async function getAllStoredUrls() {
-  const collection = await init();
+  const index = await init();
 
-  // Get all documents and extract unique URLs
-  const results = await collection.find(
-    {},
-    {
-      projection: { "metadata.url": 1 },
-    }
-  );
+  const stats = await index.describeIndexStats();
+  if (stats.totalVectorCount === 0) return [];
 
-  const docs = await results.toArray();
-
-  if (!docs?.length) return [];
-
-  const urls = new Set();
-  docs.forEach((doc) => {
-    if (doc.metadata?.url) {
-      urls.add(doc.metadata.url);
-    }
+  const queryResponse = await index.query({
+    vector: new Array(3072).fill(0),
+    topK: 10000,
+    includeMetadata: true,
+    includeValues: false,
   });
 
-  return Array.from(urls);
+  if (!queryResponse.matches?.length) return [];
+
+  const urls = queryResponse.matches
+    .map((match) => match.metadata?.url)
+    .filter((url) => url);
+
+  return [...new Set(urls)];
 }
