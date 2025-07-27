@@ -9,11 +9,6 @@ node_modules/.cache
 node_modules/puppeteer/.local-chromium
 node_modules/@swc/core-*
 node_modules/@esbuild/*
-node_modules/chromadb/dist
-node_modules/@google/genai/dist
-node_modules/@langchain/textsplitters/dist
-node_modules/axios/dist
-node_modules/cheerio/dist
 
 # Build artifacts
 .next/cache
