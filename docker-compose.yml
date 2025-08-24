@@ -1,5 +1,0 @@
-services:
-  chromedb:
-    image: chromadb/chroma
-    ports:
-      - 8000:8000

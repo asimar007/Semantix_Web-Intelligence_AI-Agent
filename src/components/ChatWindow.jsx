@@ -145,28 +145,28 @@ export default function ChatWindow({ currentUrl }) {
         ))}
 
         {isLoading && (
-          <div className="group w-full bg-black/10">
-            <div className="flex p-4 gap-4 text-base md:gap-6 md:max-w-4xl md:py-6 lg:px-0 m-auto">
+          <div className="group w-full bg-gray-900/20 border-b border-white/5">
+            <div className="flex p-4 gap-4 text-base md:gap-6 md:max-w-5xl md:py-6 lg:px-8 m-auto">
               <div className="flex-shrink-0 flex flex-col relative items-end">
-                <div className="relative h-[30px] w-[30px] p-1 rounded-sm text-white flex items-center justify-center bg-gradient-to-r from-purple-500 to-cyan-500">
+                <div className="relative h-[32px] w-[32px] p-1 rounded-lg text-white flex items-center justify-center shadow-lg bg-gradient-to-r from-emerald-500 to-teal-600">
                   <Bot className="w-4 h-4" />
                 </div>
               </div>
               <div className="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
+                    <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-bounce"></div>
                     <div
-                      className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
+                      className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-bounce"
                       style={{ animationDelay: "0.1s" }}
                     ></div>
                     <div
-                      className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
+                      className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-bounce"
                       style={{ animationDelay: "0.2s" }}
                     ></div>
                   </div>
-                  <span className="text-gray-300 text-sm">
-                    AI is analyzing...
+                  <span className="text-gray-200 text-sm font-medium">
+                    Analyzing content and generating response...
                   </span>
                 </div>
               </div>
@@ -180,7 +180,7 @@ export default function ChatWindow({ currentUrl }) {
       {messages.length === 1 && !isLoading && (
         <div className="px-4 py-3 border-t border-white/10 bg-black/30 backdrop-blur-sm">
           <p className="text-xs text-gray-400 mb-2">
-            Quick questions to get started:
+            Quick questions to get started
           </p>
           <div className="flex flex-wrap gap-2">
             {quickQuestions.map((question, index) => (
