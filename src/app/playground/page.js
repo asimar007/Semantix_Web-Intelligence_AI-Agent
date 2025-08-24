@@ -23,72 +23,6 @@ export default function PlaygroundPage() {
   const [currentStep, setCurrentStep] = useState(-1);
   const [processingError, setProcessingError] = useState("");
 
-  const processingSteps = [
-    {
-      command: "$ initialize_scraper --target=website",
-      details: "Setting up web scraping environment...",
-      subSteps: [
-        "Loading Cheerio parser",
-        "Initializing Puppeteer",
-        "Setting user agent",
-      ],
-    },
-    {
-      command: "$ connect --url=" + url,
-      details: "Establishing connection to target website...",
-      subSteps: [
-        "Resolving DNS",
-        "Establishing TCP connection",
-        "Sending HTTP request",
-      ],
-    },
-    {
-      command: "$ authenticate --agent=spider",
-      details: "Authenticating with website...",
-      subSteps: [
-        "Validating SSL certificate",
-        "Setting headers",
-        "Bypassing rate limits",
-      ],
-    },
-    {
-      command: "$ fetch_content --extract=all",
-      details: "Extracting website content...",
-      subSteps: [
-        "Parsing HTML structure",
-        "Extracting text content",
-        "Finding links and images",
-      ],
-    },
-    {
-      command: "$ process_content --ai=enabled",
-      details: "Processing content with AI...",
-      subSteps: [
-        "Chunking text content",
-        "Generating embeddings",
-        "Optimizing for search",
-      ],
-    },
-    {
-      command: "$ store_vectors --database=chroma",
-      details: "Storing in vector database...",
-      subSteps: [
-        "Connecting to ChromaDB",
-        "Indexing vectors",
-        "Creating metadata",
-      ],
-    },
-    {
-      command: "$ initialize_chat --ready=true",
-      details: "Chat interface ready!",
-      subSteps: [
-        "Loading AI model",
-        "Preparing context",
-        "Ready for questions",
-      ],
-    },
-  ];
-
   const handleUrlSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -245,7 +179,6 @@ export default function PlaygroundPage() {
           {/* Processing Terminal */}
           {isProcessing && (
             <ProcessingTerminal
-              steps={processingSteps}
               currentStep={currentStep}
               error={processingError}
             />

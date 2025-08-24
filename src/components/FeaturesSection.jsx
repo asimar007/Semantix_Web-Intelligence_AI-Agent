@@ -21,7 +21,7 @@ export function FeaturesSection() {
           </h2>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Powered by cutting-edge technology stack including Next.js 15,
-            Google Gemini AI, and ChromaDB
+            Google Gemini AI, and PineconeDB
           </p>
         </div>
 
@@ -81,7 +81,7 @@ export function FeaturesSection() {
                 Vector Database Storage
               </CardTitle>
               <CardDescription className="text-gray-300">
-                ChromaDB integration with cloud-based storage and semantic
+                PineconeDB integration with cloud-based storage and semantic
                 search capabilities
               </CardDescription>
             </CardHeader>

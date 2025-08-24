@@ -50,15 +50,17 @@ export function ArchitectureSection() {
 
           <div className="text-center">
             <div className="flex items-center justify-center mx-auto mb-4">
-              <Image
-                src="/images/chromaDB.png"
-                alt="ChromaDB"
-                width={64}
-                height={64}
-                className="w-16 h-16"
-              />
+              <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
+                <Image
+                  src="/images/pinecone.png"
+                  alt="Pinecone"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12"
+                />
+              </div>
             </div>
-            <h3 className="text-white font-semibold mb-2">ChromaDB</h3>
+            <h3 className="text-white font-semibold mb-2">Pinecone</h3>
             <p className="text-gray-400 text-sm">Vector database storage</p>
           </div>
 

@@ -1,4 +1,4 @@
-export default function ProcessingTerminal({ steps, currentStep, error }) {
+export default function ProcessingTerminal({ currentStep, error }) {
   const processSteps = [
     "Initializing scraper",
     "Connecting to website",
