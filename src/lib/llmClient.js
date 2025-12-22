@@ -16,7 +16,7 @@ User Question: ${query}
 Please provide a perfectly structured, beautifully formatted response that exemplifies excellent information design:`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-001",
+      model: "gemini-2.5-flash",
       contents: userPrompt,
       config: {
         systemInstruction: `You are Semantix AI, a specialized web intelligence assistant that analyzes website content and provides exceptionally well-formatted, structured responses.
@@ -79,7 +79,7 @@ Please provide a brief summary of this website content from ${url}:
 ${content}`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-001",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         maxOutputTokens: 300,
