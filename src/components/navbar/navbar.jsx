@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./logo";
 import { NavMenu } from "./nav-menu";
-import { NavigationSheet } from "./navigation-sheet";
 import ThemeToggle from "../theme-toggle";
 
 const Navbar = () => {
@@ -21,11 +20,6 @@ const Navbar = () => {
               Get Started
             </Button>
           </Link>
-
-          {/* Mobile Menu */}
-          <div className="md:hidden">
-            <NavigationSheet />
-          </div>
         </div>
       </div>
     </nav>

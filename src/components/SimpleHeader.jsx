@@ -1,16 +1,15 @@
-import { Bug } from "lucide-react";
 import Link from "next/link";
+import { Logo } from "./navbar/logo";
+import ThemeToggle from "./theme-toggle";
 
 export function SimpleHeader() {
   return (
-    <nav className="relative z-10 border-b border-white/10 bg-black/30 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          <Link href="/" className="flex items-center space-x-2">
-            <Bug className="w-8 h-8 text-red-500" />
-            <span className="text-xl font-bold text-white">Semantix</span>
-          </Link>
-        </div>
+    <nav className="fixed z-10 top-6 inset-x-4 h-14 sm:h-16 bg-background/50 backdrop-blur-sm border dark:border-slate-700/70 max-w-screen-xl mx-auto rounded-full">
+      <div className="h-full flex items-center justify-between mx-auto px-4">
+        <Link href="/">
+          <Logo />
+        </Link>
+        <ThemeToggle />
       </div>
     </nav>
   );
