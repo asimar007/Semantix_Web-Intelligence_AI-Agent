@@ -111,7 +111,7 @@ export default function ChatWindow({ currentUrl }) {
             </h3>
             <p className="text-gray-300 leading-relaxed">
               Enter a website URL above to start an intelligent conversation
-              with the content. I'll analyze the page and answer your questions
+              with the content. I&apos;ll analyze the page and answer your questions
               in real-time.
             </p>
           </div>

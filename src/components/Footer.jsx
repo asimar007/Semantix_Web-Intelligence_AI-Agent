@@ -1,15 +1,38 @@
-import { Bug } from "lucide-react";
+import {
+  DribbbleIcon,
+  GithubIcon,
+  TwitchIcon,
+  TwitterIcon,
+} from "lucide-react";
+import Link from "next/link";
 
-export function Footer() {
+const Footer = () => {
   return (
-    <footer className="bg-black/30 backdrop-blur-xl py-6 border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between text-sm text-gray-400">
-        <div className="flex items-center space-x-2 mb-2 md:mb-0">
-          <Bug className="w-4 h-4 text-red-500" />
-          <span className="text-white font-medium">Semantix</span>
+    <footer className="dark:border-t mt-40 dark bg-background text-foreground">
+      <div className="max-w-screen-xl mx-auto">
+        <div className="py-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-x-2 gap-y-5 px-6 xl:px-0">
+          {/* Copyright */}
+          <span className="text-muted-foreground text-center sm:text-start">
+            <Link href="/" target="_blank">
+              Built with ❤️ by Asim
+            </Link>
+          </span>
+
+          <div className="flex items-center gap-5 text-muted-foreground">
+            <Link href="https://x.com/asim_ar007" target="_blank">
+              <TwitterIcon className="h-5 w-5" />
+            </Link>
+            <Link
+              href="https://github.com/asimar007/Semantix_Web-Intelligence_AI-Agent"
+              target="_blank"
+            >
+              <GithubIcon className="h-5 w-5" />
+            </Link>
+          </div>
         </div>
-        <p>© 2024 Semantix. Web Intelligence AI Agent.</p>
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;

@@ -1,21 +1,19 @@
-import { Header } from "@/components/Header";
-import { HeroSection } from "@/components/HeroSection";
-import { FeaturesSection } from "@/components/FeaturesSection";
+import Features from "@/components/features";
+import Footer from "@/components/footer";
+import Hero from "@/components/hero";
+import { Navbar } from "@/components/navbar";
 import { ArchitectureSection } from "@/components/ArchitectureSection";
-import { UseCasesSection } from "@/components/UseCasesSection";
-import { CTASection } from "@/components/CTASection";
-import { Footer } from "@/components/Footer";
 
-export default function LandingPage() {
+export default function Home() {
   return (
     <>
-      <Header />
-      <HeroSection />
-      <FeaturesSection />
-      <ArchitectureSection />
-      <UseCasesSection />
-      <CTASection />
-      <Footer />
+      <Navbar />
+      <main className="pt-16 xs:pt-20 sm:pt-24">
+        <Hero />
+        <Features />
+        <ArchitectureSection />
+        <Footer />
+      </main>
     </>
   );
 }

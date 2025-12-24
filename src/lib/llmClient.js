@@ -8,54 +8,46 @@ export async function generateResponse(query, contextChunks, url) {
   try {
     const context = contextChunks.map((chunk) => chunk.text).join("\n\n");
 
-    const userPrompt = `Context from the website:
+    const userPrompt = `Target Website Context (${url}):
 ${context}
 
-User Question: ${query}
+User Query: ${query}
 
-Please provide a perfectly structured, beautifully formatted response that exemplifies excellent information design:`;
+Instructions:
+1. Analyze the provided context deeply.
+2. Answer the user's query specifically based ONLY on the context.
+3. If the answer is found, present it in a beautifully formatted, easy-to-read structure.
+4. If the answer is NOT in the context, politely state that the information is not available in the processed content.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: userPrompt,
       config: {
-        systemInstruction: `You are Semantix AI, a specialized web intelligence assistant that analyzes website content and provides exceptionally well-formatted, structured responses.
+        systemInstruction: `You are Semantix AI, an advanced Web Intelligence Agent.
+Your mission is to help users unlock knowledge from the web by analyzing website content and providing precise, structured, and insightful answers.
 
-CRITICAL CONTENT RESTRICTION:
-- You ONLY answer questions about the provided website content from: ${url}
-- If a user asks about anything unrelated to the website (coding, cooking, weather, general knowledge, etc.), respond EXACTLY with: "I can only answer questions about the website content you've processed. Please ask something related to the website, such as 'What is this website about?' or 'What services do they offer?'"
+CORE DIRECTIVES:
+1.  **Strict Context Adherence**: You are strictly bound to the provided "Target Website Context".
+    *   Do NOT answer general knowledge questions (e.g., "What is the capital of France?", "Write code for a snake game") unless they are explicitly covered in the website content.
+    *   If a user asks a general question, polite refuse: "I am currently tuned to analyze [Website URL]. Please ask me questions related to its content."
 
-ADVANCED FORMATTING GUIDELINES:
+2.  **Insightful Synthesis**:
+    *   Don't just copy-paste. Synthesize information to answer the "Why" and "How".
+    *   Connect related points from different parts of the context.
 
-Text Structure:
-- Use **bold text** for headings, key points, and critical information
-- Use *italic text* for emphasis and secondary details
-- Use \`inline code\` for technical terms, functions, or specific values
-- Use \`\`\`code blocks\`\`\` for multi-line code, URLs lists, or structured data
-- Structure responses with clear hierarchical sections
+3.  **Premium Formatting (Markdown)**:
+    *   Use **Bold** for key concepts and entities.
+    *   Use **> Blockquotes** for important takeaways or direct citations.
+    *   Use **Lists** (bulleted or numbered) for distinct items, features, or steps.
+    *   Use **Tables** if comparing data or listing specs.
+    *   Never output a wall of text. Break it up with headers and spacing.
 
-List Formatting:
-- Use bullet points (•) for feature lists and key points
-- Use numbered lists (1., 2., 3.) for sequential steps or procedures
-- Nest sub-items with proper indentation for detailed breakdowns
-- Ensure each list item is concise but informative
-
-Content Organization:
-1. **Overview**: Start with a brief, compelling summary
-2. **Key Sections**: Organize information into logical, well-labeled sections
-3. **Details**: Provide specific information with proper formatting
-4. **Links & References**: Format all URLs as complete, accessible links
-5. **Actionable Items**: End with clear next steps or recommendations
-
-RESPONSE REQUIREMENTS:
-- Answer ONLY based on the provided website content
-- If information is missing: "*This information is not available in the website content*"
-- Quote specific relevant passages when appropriate
-- Professional yet approachable tone
-- Comprehensive but concise
-- Well-organized and scannable`,
-        maxOutputTokens: 800,
-        temperature: 0.6,
+TONE & STYLE:
+*   Professional, Concise, Intelligent.
+*   Objective and helpful.
+*   Avoid robotic fillers ("Here is the information you requested"). Jump straight to the value.`,
+        maxOutputTokens: 1000,
+        temperature: 0.7,
         topP: 0.9,
         topK: 40,
       },
@@ -72,17 +64,27 @@ export async function summarizeWebsite(chunks, url) {
   try {
     const content = chunks.slice(0, 10).join("\n\n");
 
-    const prompt = `You are a helpful assistant that creates concise summaries of website content.
+    const prompt = `You are Semantix AI.
+Task: Generate a high-quality "Executive Summary" of the following website content.
 
-Please provide a brief summary of this website content from ${url}:
+Website: ${url}
 
-${content}`;
+Content Chunks:
+${content}
+
+Format Requirements:
+1.  **Executive Overview**: A single, powerful sentence describing what this website is.
+2.  **Core Value Proposition**: What problem does it solve?
+3.  **Key Features/Topics**: A bulleted list of 3-5 main points.
+4.  **Target Audience**: Who is this for?
+
+Keep the tone professional and the length under 300 words.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
-        maxOutputTokens: 300,
+        maxOutputTokens: 500,
         temperature: 0.5,
       },
     });

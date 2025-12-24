@@ -1,5 +1,11 @@
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "next-themes";
+import { Geist } from "next/font/google";
 import "./globals.css";
-import Image from "next/image";
+
+const geistSans = Geist({
+  subsets: ["latin"],
+});
 
 export const metadata = {
   title: "Semantix - Web Intelligence AI Agent",
@@ -9,26 +15,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`antialiased`}>
-        <div className="min-h-screen bg-black relative overflow-hidden">
-          {/* Full page background */}
-          <div className="fixed inset-0 z-0">
-            <div className="absolute inset-0 w-full h-full overflow-hidden">
-              <Image
-                src="/images/clean-abstract-bg.png"
-                alt="Abstract geometric background"
-                fill
-                priority
-                quality={75}
-                className="object-cover object-center scale-125 opacity-90"
-                sizes="100vw"
-              />
-              <div className="absolute inset-0 bg-black/20" />
-            </div>
-          </div>
-          <main className="relative z-10">{children}</main>
-        </div>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.className} antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <TooltipProvider>{children}</TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
