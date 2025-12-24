@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, MessageCircle, Bot, Sparkles } from "lucide-react";
+import { Send, Bot, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+
 import MessageBubble from "./MessageBubble";
 
-export default function ChatWindow({ currentUrl }) {
+export default function ChatWindow({ currentUrl, onClose }) {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +19,9 @@ export default function ChatWindow({ currentUrl }) {
   };
 
   useEffect(() => {
-    scrollToBottom();
+    if (messages.length > 0 && messages[messages.length - 1].isUser) {
+      scrollToBottom();
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -93,141 +94,141 @@ export default function ChatWindow({ currentUrl }) {
     }
   };
 
-  if (!currentUrl) {
-    return (
-      <Card className="h-64 bg-black/20 backdrop-blur-sm border-white/10">
-        <CardContent className="flex items-center justify-center h-full p-8">
-          <div className="text-center max-w-md">
-            <div className="relative mb-6">
-              <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                <MessageCircle className="w-10 h-10 text-white" />
-              </div>
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                <Sparkles className="w-3 h-3 text-white" />
-              </div>
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-3">
-              AI Chat Ready!
-            </h3>
-            <p className="text-gray-300 leading-relaxed">
-              Enter a website URL above to start an intelligent conversation
-              with the content. I&apos;ll analyze the page and answer your questions
-              in real-time.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  if (!currentUrl) return null;
 
   return (
-    <Card className="flex flex-col h-screen md:h-[calc(100vh-300px)] bg-black/20 backdrop-blur-sm border-white/10 overflow-hidden">
-      <CardContent className="flex-1 overflow-y-auto bg-gradient-to-b from-black/10 to-black/20 p-0">
+    <div className="flex flex-col h-full bg-background relative">
+      {/* Chat Header */}
+      <div className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4 border-b border-border/40 bg-background/80 backdrop-blur-md sticky top-0 z-10">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Bot className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm md:text-base text-foreground">
+              Semantix AI
+            </h3>
+            <p className="text-xs text-muted-foreground truncate max-w-[200px] md:max-w-xs">
+              {currentUrl}
+            </p>
+          </div>
+        </div>
+        <Button
+          onClick={onClose}
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded-full transition-colors"
+          title="End Chat"
+        >
+          <X className="w-5 h-5" />
+        </Button>
+      </div>
+
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
         {messages.length === 0 && (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Bot className="w-6 h-6 text-white" />
+          <div className="flex items-center justify-center h-full pb-20">
+            <div className="text-center opacity-0 animate-in fade-in duration-700 slide-in-from-bottom-4">
+              <div className="w-12 h-12 bg-muted/30 rounded-xl flex items-center justify-center mx-auto mb-6 ring-1 ring-border">
+                <Bot className="w-6 h-6 text-foreground/80" />
               </div>
-              <p className="text-gray-300 animate-pulse">
+              <p className="text-muted-foreground font-medium">
                 Initializing conversation...
               </p>
             </div>
           </div>
         )}
 
-        {messages.map((message, index) => (
-          <MessageBubble
-            key={index}
-            message={message.text}
-            isUser={message.isUser}
-          />
-        ))}
+        {/* Message Container Pattern */}
+        <div className="flex flex-col w-full pb-4">
+          {messages.map((message, index) => (
+            <MessageBubble
+              key={index}
+              message={message.text}
+              isUser={message.isUser}
+            />
+          ))}
 
-        {isLoading && (
-          <div className="group w-full bg-gray-900/20 border-b border-white/5">
-            <div className="flex p-4 gap-4 text-base md:gap-6 md:max-w-5xl md:py-6 lg:px-8 m-auto">
-              <div className="flex-shrink-0 flex flex-col relative items-end">
-                <div className="relative h-[32px] w-[32px] p-1 rounded-lg text-white flex items-center justify-center shadow-lg bg-gradient-to-r from-emerald-500 to-teal-600">
-                  <Bot className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]">
-                <div className="flex items-center space-x-3">
-                  <div className="flex space-x-1">
-                    <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-bounce"></div>
-                    <div
-                      className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.1s" }}
-                    ></div>
-                    <div
-                      className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
-                    ></div>
+          {isLoading && (
+            <div className="group w-full py-2">
+              <div className="flex p-4 gap-4 text-base md:gap-6 md:max-w-5xl md:py-6 lg:px-8 m-auto">
+                <div className="flex-shrink-0 flex flex-col relative mt-1">
+                  <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-emerald-500" />
                   </div>
-                  <span className="text-gray-200 text-sm font-medium">
-                    Analyzing content and generating response...
-                  </span>
+                </div>
+                <div className="relative flex-1 py-1">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce"></span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+          <div ref={messagesEndRef} className="h-4" />
+        </div>
+      </div>
 
-        <div ref={messagesEndRef} />
-      </CardContent>
+      {/* Input Area */}
+      <div className="p-4 md:p-6 lg:pb-8 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border/40">
+        <div className="max-w-3xl lg:max-w-4xl mx-auto space-y-4">
+          {messages.length === 1 && !isLoading && (
+            <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-2 animate-in fade-in slide-in-from-bottom-2 duration-500">
+              {quickQuestions.map((question, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleQuickQuestion(question)}
+                  className="px-4 py-2 bg-muted/50 hover:bg-muted text-muted-foreground text-xs md:text-sm rounded-full transition-all duration-200 border border-border/50 hover:border-border hover:scale-105 active:scale-95"
+                >
+                  {question}
+                </button>
+              ))}
+            </div>
+          )}
 
-      {messages.length === 1 && !isLoading && (
-        <div className="px-4 py-3 border-t border-white/10 bg-black/30 backdrop-blur-sm">
-          <p className="text-xs text-gray-400 mb-2">
-            Quick questions to get started
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {quickQuestions.map((question, index) => (
-              <Badge
-                key={index}
-                variant="secondary"
-                className="px-3 py-1.5 bg-black/40 hover:bg-black/60 text-gray-300 rounded-lg cursor-pointer transition-colors duration-200 border border-white/20"
-                onClick={() => handleQuickQuestion(question)}
+          <div className="relative group">
+            <form
+              onSubmit={handleSubmit}
+              className="relative flex items-end gap-2 bg-muted p-2 rounded-3xl focus-within:ring-1 focus-within:ring-primary/30 transition-shadow"
+            >
+              <Textarea
+                ref={inputRef}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Message Semantix AI..."
+                disabled={isLoading}
+                rows={1}
+                className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder-muted-foreground min-h-[44px] max-h-[200px] py-3 px-4 resize-none text-[15px] leading-relaxed scrollbar-hide shadow-none"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
+              />
+              <Button
+                type="submit"
+                disabled={!inputValue.trim() || isLoading}
+                size="icon"
+                variant="ghost"
+                className={`mb-1 mr-1 h-9 w-9 rounded-xl transition-all duration-200 ${
+                  inputValue.trim()
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "bg-muted/50 text-muted-foreground cursor-not-allowed hover:bg-muted/50"
+                }`}
               >
-                {question}
-              </Badge>
-            ))}
+                <Send className="w-4 h-4" />
+              </Button>
+            </form>
+            <p className="text-[10px] text-muted-foreground mt-2 text-center font-medium opacity-60">
+              Semantix can make mistakes. Consider checking important
+              information.
+            </p>
           </div>
         </div>
-      )}
-
-      <div className="border-t border-white/10 p-4 bg-black/30 backdrop-blur-sm">
-        <form onSubmit={handleSubmit} className="flex gap-3 items-end">
-          <Textarea
-            ref={inputRef}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Ask me anything about this website..."
-            disabled={isLoading}
-            rows={1}
-            className="flex-1 bg-black/40 backdrop-blur-sm border-white/20 text-white placeholder-gray-400 focus:ring-white focus:border-transparent disabled:opacity-50 resize-none min-h-[48px] max-h-[200px]"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
-          />
-          <Button
-            type="submit"
-            disabled={!inputValue.trim() || isLoading}
-            size="lg"
-            className="bg-white hover:bg-gray-100 text-black min-h-[48px] px-6"
-          >
-            <Send className="w-4 h-4" />
-          </Button>
-        </form>
-
-        <p className="text-xs text-gray-400 mt-2 text-center">
-          Press Enter to send • Shift+Enter for new line
-        </p>
       </div>
-    </Card>
+    </div>
   );
 }
