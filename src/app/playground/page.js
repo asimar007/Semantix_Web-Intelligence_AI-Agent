@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PlaygroundHeader } from "@/components/playgroundHeader";
 import { Button } from "@/components/ui/button";
 import ChatInterface from "@/components/chat/ChatInterface";
-import ProcessingTerminal from "@/components/processingTerminal";
+import ProcessingTerminal from "@/components/ProcessingTerminal";
 import { MessageCircle, Loader2 } from "lucide-react";
 
 export default function PlaygroundPage() {
