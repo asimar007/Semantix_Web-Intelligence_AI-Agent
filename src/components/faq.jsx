@@ -1,48 +1,41 @@
-import {
-  BadgeDollarSign,
-  Route,
-  ShieldCheck,
-  Truck,
-  Undo2,
-  UserRoundCheck,
-} from "lucide-react";
+import { Brain, Code, FileText, Globe, ShieldCheck, Zap } from "lucide-react";
 
 const faq = [
   {
-    icon: Undo2,
-    question: "What is your return policy?",
+    icon: Brain,
+    question: "What is Semantix AI?",
     answer:
-      "You can return unused items in their original packaging within 30 days for a refund or exchange. Contact support for assistance.",
+      "Semantix is an intelligent web scraping and analysis platform. It turns any website into a searchable knowledge base using advanced AI to understand and answer questions about the content.",
   },
   {
-    icon: Route,
-    question: "How do I track my order?",
+    icon: Globe,
+    question: "How does the scraping work?",
     answer:
-      "Track your order using the link provided in your confirmation email, or log into your account to view tracking details.",
+      "We use a hybrid approach combining static and dynamic scraping to handle everything from simple blogs to complex SPAs, ensuring comprehensive content extraction.",
   },
   {
-    icon: Truck,
-    question: "Do you ship internationally?",
+    icon: Zap,
+    question: "Which AI models are used?",
     answer:
-      "Yes, we ship worldwide. Shipping fees and delivery times vary by location, and customs duties may apply for some countries.",
+      "The platform leverages Google Gemini AI for powerful text embedding and natural language generation, enabling accurate and context-aware responses.",
   },
   {
-    icon: BadgeDollarSign,
-    question: "What payment methods do you accept?",
+    icon: Code,
+    question: "Can I run this locally?",
     answer:
-      "We accept Visa, MasterCard, American Express, PayPal, Apple Pay, and Google Pay, ensuring secure payment options for all customers.",
+      "Yes! Semantix is open-source. You can clone the repository, set up your environment variables, and run it locally with Node.js and Next.js.",
+  },
+  {
+    icon: FileText,
+    question: "What type of content can I query?",
+    answer:
+      "You can input any publicly accessible URL. The system processes text content, documentation, articles, and more, making them instantly queryable via chat.",
   },
   {
     icon: ShieldCheck,
-    question: "What if I receive a damaged item?",
+    question: "Is my data secure?",
     answer:
-      "Please contact our support team within 48 hours of delivery with photos of the damaged item. We’ll arrange a replacement or refund.",
-  },
-  {
-    icon: UserRoundCheck,
-    question: "How can I contact customer support?",
-    answer:
-      "Reach out via email at support@example.com or call us at 1-800-123-4567 for assistance with any inquiries.",
+      "Your queries and processed data are handled securely. We use industry-standard encryption and do not share your private data with third parties.",
   },
 ];
 
