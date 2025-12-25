@@ -11,7 +11,7 @@ const Navbar = () => {
         <Logo />
 
         {/* Desktop Menu */}
-        <NavMenu className="hidden md:block" />
+        <NavMenu />
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
