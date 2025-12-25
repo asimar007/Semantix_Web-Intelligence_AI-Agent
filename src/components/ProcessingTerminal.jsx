@@ -16,7 +16,7 @@ export default function ProcessingTerminal({ currentStep, error }) {
       <div className="bg-background/80 backdrop-blur-md border border-border/40 rounded-xl overflow-hidden shadow-sm">
         {/* Header */}
         <div className="bg-muted/30 px-4 py-3 border-b border-border/40 flex items-center gap-2">
-          <Terminal className="w-4 h-4 text-emerald-500" />
+          <Terminal className="w-4 h-4 text-emerald-600 dark:text-emerald-500" />
           <h3 className="text-sm font-medium text-foreground/90">
             System Processing
           </h3>
@@ -35,13 +35,13 @@ export default function ProcessingTerminal({ currentStep, error }) {
                   {/* Status Icon */}
                   <div className="flex-shrink-0">
                     {isCompleted && (
-                      <div className="w-5 h-5 bg-emerald-500/10 rounded-full flex items-center justify-center">
-                        <Check className="w-3 h-3 text-emerald-500" />
+                      <div className="w-5 h-5 bg-emerald-100 dark:bg-emerald-500/20 rounded-full flex items-center justify-center">
+                        <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                       </div>
                     )}
                     {isCurrent && !error && (
-                      <div className="w-5 h-5 bg-emerald-500/10 rounded-full flex items-center justify-center">
-                        <Loader2 className="w-3 h-3 text-emerald-500 animate-spin" />
+                      <div className="w-5 h-5 bg-emerald-100 dark:bg-emerald-500/20 rounded-full flex items-center justify-center">
+                        <Loader2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400 animate-spin" />
                       </div>
                     )}
                     {isCurrent && error && (
@@ -64,7 +64,7 @@ export default function ProcessingTerminal({ currentStep, error }) {
                         : isCurrent
                         ? error
                           ? "text-destructive font-medium"
-                          : "text-emerald-600 dark:text-emerald-400 font-medium"
+                          : "text-emerald-700 dark:text-emerald-400 font-medium"
                         : "text-muted-foreground/40"
                     }`}
                   >

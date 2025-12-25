@@ -17,7 +17,8 @@ Instructions:
 1. Analyze the provided context deeply.
 2. Answer the user's query specifically based ONLY on the context.
 3. If the answer is found, present it in a beautifully formatted, easy-to-read structure.
-4. If the answer is NOT in the context, politely state that the information is not available in the processed content.`;
+4. If the answer is NOT in the context, politely state that the information is not available in the processed content.
+5. ensure the response is complete and falls within the token limit.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",

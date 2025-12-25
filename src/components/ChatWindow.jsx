@@ -28,7 +28,7 @@ export default function ChatWindow({ currentUrl, onClose }) {
     if (currentUrl) {
       setMessages([
         {
-          text: `👋 Hello! I've successfully analyzed the content from **${currentUrl}**\n\nI'm ready to help you explore and understand the website's content. Ask me anything - from summarizing key points to diving deep into specific topics!`,
+          text: `👋 I've analyzed ${currentUrl}.\n Ask me anything about the website!`,
           isUser: false,
           timestamp: Date.now(),
         },
@@ -36,19 +36,16 @@ export default function ChatWindow({ currentUrl, onClose }) {
     }
   }, [currentUrl]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const sendMessage = async (messageText) => {
+    if (!messageText.trim() || isLoading) return;
 
-    if (!inputValue.trim() || isLoading) return;
-
-    const userMessage = inputValue.trim();
     setInputValue("");
     setIsLoading(true);
 
     setMessages((prev) => [
       ...prev,
       {
-        text: userMessage,
+        text: messageText,
         isUser: true,
         timestamp: Date.now(),
       },
@@ -60,7 +57,7 @@ export default function ChatWindow({ currentUrl, onClose }) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: userMessage,
+        query: messageText,
         url: currentUrl,
       }),
     });
@@ -80,6 +77,11 @@ export default function ChatWindow({ currentUrl, onClose }) {
     inputRef.current?.focus();
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    sendMessage(inputValue);
+  };
+
   const quickQuestions = [
     "Summarize this website",
     "What are the key topics?",
@@ -88,10 +90,7 @@ export default function ChatWindow({ currentUrl, onClose }) {
   ];
 
   const handleQuickQuestion = (question) => {
-    if (!isLoading) {
-      setInputValue(question);
-      inputRef.current?.focus();
-    }
+    sendMessage(question);
   };
 
   if (!currentUrl) return null;

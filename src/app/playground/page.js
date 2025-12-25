@@ -96,7 +96,7 @@ export default function PlaygroundPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background dark:bg-[#09090b] text-foreground">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header Component - Always visible */}
       <div className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-center pointer-events-none">
         <div className="pointer-events-auto w-full max-w-screen-xl">
