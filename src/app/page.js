@@ -1,6 +1,7 @@
 import Features from "@/components/features";
 import Footer from "@/components/Footer";
 import Hero from "@/components/hero";
+import FAQ from "@/components/faq";
 import { Navbar } from "@/components/navbar";
 import { ArchitectureSection } from "@/components/ArchitectureSection";
 
@@ -12,6 +13,7 @@ export default function Home() {
         <Hero />
         <Features />
         <ArchitectureSection />
+        <FAQ />
         <Footer />
       </main>
     </>
