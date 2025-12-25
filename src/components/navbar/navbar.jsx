@@ -15,7 +15,7 @@ const Navbar = () => {
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <Link href="github.com/asimar007" target="_blank">
+          <Link href="/playground">
             <Button className="hidden rounded-full sm:inline-flex cursor-pointer">
               Get Started
             </Button>

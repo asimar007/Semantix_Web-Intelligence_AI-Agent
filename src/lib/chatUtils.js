@@ -1,6 +1,6 @@
 import { Bug, Bot } from "lucide-react";
 
-function parseMessage(message) {
+export function parseMessage(message) {
   const lines = message.split("\n");
   const elements = [];
 
@@ -24,7 +24,7 @@ function parseMessage(message) {
       elements.push(
         <Tag
           key={`header-${i}`}
-          className="font-bold mt-4 mb-2 text-foreground"
+          className="font-bold mt-2 mb-1 text-foreground"
         >
           {parseInlineFormatting(content, `header-${i}`)}
         </Tag>
@@ -54,7 +54,7 @@ function parseMessage(message) {
 
     // Regular paragraphs
     elements.push(
-      <div key={`para-${i}`} className="mb-2 leading-relaxed">
+      <div key={`para-${i}`} className="mb-1 leading-relaxed">
         {parseInlineFormatting(line, `para-${i}`)}
       </div>
     );
@@ -63,7 +63,7 @@ function parseMessage(message) {
   return elements;
 }
 
-function parseInlineFormatting(text, keyPrefix) {
+export function parseInlineFormatting(text, keyPrefix) {
   const parts = text.split(
     /(\*\*.*?\*\*|\*.*?\*|`.*?`|https?:\/\/[^\s]+|www\.[^\s]+|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g
   );
@@ -132,39 +132,4 @@ function parseInlineFormatting(text, keyPrefix) {
     // Regular text
     return part;
   });
-}
-
-export default function MessageBubble({ message, isUser }) {
-  return (
-    <div
-      className={`w-full ${
-        isUser ? "bg-muted/10" : "bg-transparent"
-      } border-b border-border/40`}
-    >
-      <div className="flex p-4 gap-4 text-base md:gap-6 md:max-w-5xl md:py-6 lg:px-8 m-auto">
-        {/* Avatar */}
-        <div className="flex-shrink-0">
-          <div
-            className={`h-8 w-8 rounded-lg flex items-center justify-center ${
-              isUser
-                ? "text-primary bg-primary/10"
-                : "text-emerald-500 bg-emerald-500/10"
-            }`}
-          >
-            {isUser ? <Bug className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-          </div>
-        </div>
-
-        {/* Message Content */}
-        <div className="flex-1 min-w-0">
-          <div className="font-semibold text-sm mb-1 opacity-90 text-foreground/80">
-            {isUser ? "You" : "Semantix AI"}
-          </div>
-          <div className="break-words leading-relaxed text-foreground">
-            {parseMessage(message)}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 }

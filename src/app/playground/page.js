@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { SimpleHeader } from "@/components/SimpleHeader";
+import { PlaygroundHeader } from "@/components/playgroundHeader";
 import { Button } from "@/components/ui/button";
-import ChatWindow from "@/components/ChatWindow";
-import ProcessingTerminal from "@/components/ProcessingTerminal";
+import ChatInterface from "@/components/chat/ChatInterface";
+import ProcessingTerminal from "@/components/processingTerminal";
 import { MessageCircle, Loader2 } from "lucide-react";
 
 export default function PlaygroundPage() {
@@ -100,7 +100,7 @@ export default function PlaygroundPage() {
       {/* Header Component - Always visible */}
       <div className="fixed top-0 left-0 right-0 z-50 p-4 flex justify-center pointer-events-none">
         <div className="pointer-events-auto w-full max-w-screen-xl">
-          <SimpleHeader />
+          <PlaygroundHeader />
         </div>
       </div>
 
@@ -109,7 +109,7 @@ export default function PlaygroundPage() {
         // Full Screen Chat View
         <div className="fixed inset-0 top-0 pt-[88px] pb-4 px-4 bg-background animate-in fade-in duration-300">
           <div className="h-full w-full max-w-5xl mx-auto rounded-3xl overflow-hidden border border-border/50 shadow-2xl bg-background/50 backdrop-blur-sm">
-            <ChatWindow
+            <ChatInterface
               currentUrl={currentUrl}
               onClose={() => setCurrentUrl("")}
             />
